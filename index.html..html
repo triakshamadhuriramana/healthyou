@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Healthy You</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to right, #a8edea, #fed6e3);
+      text-align: center;
+    }
+    .screen {
+      display: none;
+      padding: 20px;
+    }
+    .active {
+      display: block;
+    }
+    .card {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      padding: 20px;
+      max-width: 400px;
+      margin: 40px auto;
+    }
+    button {
+      background: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 10px 20px;
+      margin: 10px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background: #45a049;
+    }
+    input {
+      padding: 10px;
+      margin: 5px 0;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      width: 90%;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="intro" class="screen active">
+    <div class="card">
+      <h1>Welcome to Healthy You</h1>
+      <p>Your personal health companion.</p>
+      <button onclick="goTo('login')">Get Started</button>
+    </div>
+  </div>
+
+  <div id="login" class="screen">
+    <div class="card">
+      <h2>Login</h2>
+      <input type="text" id="name" placeholder="Enter your name" />
+      <input type="date" id="dob" placeholder="Enter your date of birth" />
+      <button onclick="validateLogin()">Continue</button>
+      <p id="loginError" style="color:red;"></p>
+    </div>
+  </div>
+
+  <div id="main" class="screen">
+    <div class="card">
+      <h2>Check Your Health</h2>
+      <input type="number" id="weight" placeholder="Enter your weight (kg)" />
+      <button onclick="checkBMI()">Check</button>
+      <p id="bmiResult"></p>
+      <button onclick="goTo('location')">Next</button>
+    </div>
+  </div>
+
+  <div id="location" class="screen">
+    <div class="card">
+      <h2>Find Nearby Clinics</h2>
+      <input type="text" id="state" placeholder="Enter your State" />
+      <input type="text" id="country" placeholder="Enter your Country" />
+      <input type="text" id="area" placeholder="Enter your Area" />
+      <button onclick="showHospitals()">Find</button>
+      <div id="hospitalResult"></div>
+    </div>
+  </div>
+
+  <script>
+    function goTo(screen) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(screen).classList.add('active');
+    }
+
+    function validateLogin() {
+      const name = document.getElementById('name').value.trim();
+      const dob = document.getElementById('dob').value.trim();
+      if (!name.match(/^[A-Za-z ]+$/)) {
+        document.getElementById('loginError').textContent = "Please enter a valid name.";
+        return;
+      }
+      if (!dob) {
+        document.getElementById('loginError').textContent = "Please enter your date of birth.";
+        return;
+      }
+      document.getElementById('loginError').textContent = "";
+      goTo('main');
+    }
+
+    function checkBMI() {
+      const weight = parseFloat(document.getElementById('weight').value);
+      let result = "";
+      if (isNaN(weight)) {
+        result = "Please enter a valid weight.";
+      } else if (weight > 40) {
+        result = "You are overweight. Try to lose some weight with healthy diet & exercise.";
+      } else if (weight <= 40 && weight >= 30) {
+        result = "You are healthy. Keep it up, exercise regularly & take checkups.";
+      } else if (weight < 30 && weight >= 20) {
+        result = "You are slim. Ensure protein intake and balanced diet.";
+      } else if (weight < 20) {
+        result = "You are very slim. Eat more and consult a doctor for advice.";
+      }
+      document.getElementById('bmiResult').textContent = result;
+    }
+
+    function showHospitals() {
+      const state = document.getElementById('state').value;
+      const country = document.getElementById('country').value;
+      const area = document.getElementById('area').value;
+      const hospitalDiv = document.getElementById('hospitalResult');
+      if (!state || !country || !area) {
+        hospitalDiv.innerHTML = "<p style='color:red;'>Please fill all fields.</p>";
+      } else {
+        hospitalDiv.innerHTML = `<p>Showing hospitals near ${area}, ${state}, ${country}:</p>
+          <iframe width="100%" height="300" style="border:0" loading="lazy"
+          allowfullscreen referrerpolicy="no-referrer-when-downgrade"
+          src="https://www.google.com/maps?q=hospitals+near+${encodeURIComponent(area + ' ' + state + ' ' + country)}&output=embed"></iframe>`;
+      }
+    }
+  </script>
+</body>
+</html>
